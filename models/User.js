@@ -25,5 +25,4 @@ const userSchema = new mongoose.Schema({
 //need a virtual
 
 const User = model('user', userSchema);
-
 module.exports = User;
