@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const userSchema = require('./User');
+const User = require('./User');
 const reactionSchema = require('./Reaction');
 
 const thoughtSchema = new mongoose.Schema({
@@ -20,7 +20,8 @@ const thoughtSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        ref: 'User'
     },
     reactions: [reactionSchema]
 });
