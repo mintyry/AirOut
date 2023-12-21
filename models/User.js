@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const Thought = require('./Thought');
-
 
 const userSchema = new mongoose.Schema({
     username:
@@ -18,16 +16,15 @@ const userSchema = new mongoose.Schema({
         unique: true,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
     },
-    //check if correct
     thoughts: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Thought'
         }
     ],
     friends: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }
     ]
@@ -35,5 +32,6 @@ const userSchema = new mongoose.Schema({
 
 //need a virtual
 
-const User = model('user', userSchema);
+//model is a method that turns a schema into a model (a collection that can stand on its own)
+const User = mongoose.model('User', userSchema);
 module.exports = User;
