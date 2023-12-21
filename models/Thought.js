@@ -18,7 +18,10 @@ const thoughtSchema = new mongoose.Schema({
             return formattedDate;
         }
     },
-    username: [userSchema],
+    username: {
+        type: String,
+        required: true
+    },
     reactions: [reactionSchema]
 });
 
