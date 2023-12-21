@@ -2,3 +2,6 @@
 - api get routes display data in json format
 - create, update, and delete users and thoughts
 - create and delete reactions, add and remove friends from dbs
+
+questions: cwd
+next todo:
