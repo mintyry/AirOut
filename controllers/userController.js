@@ -3,23 +3,40 @@ const { User } = require('../models');
 // function to find and read all users
 async function getUsers(req, res) {
     try {
-        const result = await User.find({});
-        res.status(200).json(result);
+        const allUsers = await User.find({});
+        res.status(200).json(allUsers);
     } catch (error) {
         console.log('Could not get all users');
         res.status(500).json({ message: 'could not get all users' });
     }
 };
 
+//function to find one user and read
+async function getOneUser(req, res) {
+    try {
+        const oneUser = await User
+            .findOne({ _id: req.params.userId })
+            .select('-__v');
+
+        if (!oneUser) {
+            return res.status(404).json({ message: 'User does not exist' })
+        }
+        res.status(200).json(oneUser);
+    } catch (error) {
+        console.log('Could not get all users');
+        res.status(500).json({ error });
+    }
+};
+
 //function to create a user
 async function createUser(req, res) {
     try {
-        const user = await User.create(req.body);
-        res.json(user);
+        const newUser = await User.create(req.body);
+        res.json(newUser);
 
     } catch (error) {
         res.status(500).json(error);
     }
 };
 
-module.exports = { getUsers, createUser };
+module.exports = { getUsers, getOneUser, createUser };
