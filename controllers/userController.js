@@ -56,4 +56,24 @@ async function updateUser(req, res) {
     }
 };
 
-module.exports = { getUsers, getOneUser, createUser, updateUser };
+//function to delete user
+async function deleteUser(req, res) {
+    console.log('this hit first')
+    try {
+        console.log('this hit second')
+        const deletedUser = await User.findOneAndDelete({ _id: req.params.userId });
+        console.log('this hit third')
+        console.log(deletedUser);
+        if(!deletedUser){
+            return res.status(404).json({message: 'Cannot delete a user that does not exist'});
+        }
+
+        res.json({message: 'User deleted.'});
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+module.exports = { getUsers, getOneUser, createUser, updateUser, deleteUser };
