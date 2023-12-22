@@ -35,8 +35,25 @@ async function createUser(req, res) {
         res.json(newUser);
 
     } catch (error) {
+        console.log('could not make user');
         res.status(500).json(error);
     }
 };
 
-module.exports = { getUsers, getOneUser, createUser };
+//function to update user
+async function updateUser(req, res) {
+    try {
+        const editedUser = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            req.body,
+            { new: true }
+        );
+        res.json(editedUser);
+
+    } catch (error) {
+        console.log('could not update user');
+        res.status(500).json(error);
+    }
+};
+
+module.exports = { getUsers, getOneUser, createUser, updateUser };
