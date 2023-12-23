@@ -76,4 +76,32 @@ async function deleteUser(req, res) {
     }
 };
 
-module.exports = { getUsers, getOneUser, createUser, updateUser, deleteUser };
+//function to add friend by _id
+async function addFriend(req, res) {
+    try {
+        const addedFriend = await User
+        .findOne({_id: req.params.friendId})
+        .select('-__v');
+
+        if (!addedFriend) {
+            return res.status(404).json({message: 'Could not find the user you want to add.'})
+        }
+        const madeNewFriend = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $addToSet: { friends: addedFriend._id } },
+            { new: true }
+        );
+            
+        if (!madeNewFriend) {
+            return res.status(404).json({message: 'User trying to add friend does not exist.'})
+        }
+
+        res.status(200).json({ message: 'You made a new friend!', madeNewFriend })
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+module.exports = { getUsers, getOneUser, createUser, updateUser, deleteUser, addFriend };
