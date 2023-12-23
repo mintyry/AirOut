@@ -30,7 +30,8 @@ const userSchema = new mongoose.Schema({
     ]
 });
 
-//need a virtual
+//need a virtual need to add toJson ^ and getter
+userSchema.virtual('friendCount')
 
 //model is a method that turns a schema into a model (a collection that can stand on its own)
 const User = mongoose.model('User', userSchema);
