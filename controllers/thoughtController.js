@@ -36,15 +36,15 @@ async function airOutThought(req, res) {
         const user = await User.findOneAndUpdate
             (
                 { _id: req.body.userId },
-                {$addToSet: { thoughts: newThought._id } },
+                { $addToSet: { thoughts: newThought._id } },
                 { new: true }
             );
 
-            if (!user) {
-                return res.status(404).json({
-                    message: 'Thought aired out, but no user with that ID.'
-                })
-            };
+        if (!user) {
+            return res.status(404).json({
+                message: 'Thought aired out, but no user with that ID.'
+            })
+        };
         res.json({
             message: 'Your thought was aired out. Check thought get route to see newly made though, check users get route to see thought associated with user.'
         });
@@ -55,5 +55,28 @@ async function airOutThought(req, res) {
     }
 };
 
+//function to update user by _id
+async function updateThought(req, res) {
+    try {
+        const reThought = await Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            req.body,
+            { new: true }
+        );
 
-module.exports = { getThoughts, getOneThought, airOutThought };
+        if (!reThought) {
+            return res.status(404).json({
+                message: 'No thought with that ID.'
+            })
+        }
+
+        res.json(reThought);
+
+    } catch (error) {
+        console.log('could not update user');
+        res.status(500).json(error);
+    }
+};
+
+
+module.exports = { getThoughts, getOneThought, airOutThought, updateThought };
