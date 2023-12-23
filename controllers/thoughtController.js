@@ -83,12 +83,36 @@ async function updateThought(req, res) {
 async function deleteThought(req, res) {
     try {
         const deletedThought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
- 
-        if(!deletedThought){
-            return res.status(404).json({message: 'Cannot delete a thought that does not exist'});
+
+        if (!deletedThought) {
+            return res.status(404).json({ message: 'Cannot delete a thought that does not exist' });
         }
 
-        res.json({message: 'Your thought have been deleted. Flash Men In Black light.'});
+        res.json({ message: 'Your thought have been deleted. Flash Men In Black light.' });
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+//REACTIONS
+
+//function to create reaction
+async function addReaction(req, res) {
+    try {
+        const thought = await Thought.findOneAndUpdate
+            (
+                { _id: req.params.thoughtId },
+                { $addToSet: { reactions: req.body } },
+                { runValidators: true, new: true }
+            );
+
+        if (!thought) {
+            return res.status(404).json({ message: 'No thought to react to.' });
+        }
+
+        res.json(thought);
 
     } catch (error) {
         console.log('Error:', error);
@@ -97,4 +121,4 @@ async function deleteThought(req, res) {
 };
 
 
-module.exports = { getThoughts, getOneThought, airOutThought, updateThought, deleteThought };
+module.exports = { getThoughts, getOneThought, airOutThought, updateThought, deleteThought, addReaction };
