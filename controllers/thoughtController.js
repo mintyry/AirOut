@@ -47,7 +47,7 @@ async function airOutThought(req, res) {
             })
         };
         res.json({
-            message: 'Your thought was aired out. Check thought get route to see newly made though, check users get route to see thought associated with user.'
+            message: 'Your thought was aired out. Check thought get route to see newly made thought, check users get route to see thought associated with user.'
         });
 
     } catch (error) {
@@ -105,7 +105,7 @@ async function addReaction(req, res) {
             (
                 { _id: req.params.thoughtId },
                 { $addToSet: { reactions: req.body } },
-                { runValidators: true, new: true }
+                { new: true }
             );
 
         if (!thought) {
@@ -120,5 +120,27 @@ async function addReaction(req, res) {
     }
 };
 
+//function to delete reactions
+async function deleteReaction(req, res) {
+    try {
+        const thought = await Thought.findOneAndUpdate
+            (
+                { _id: req.params.thoughtId },
+                { $pull: { reactions: req.body } },
+                { runValidators: true, new: true }
+            );
 
-module.exports = { getThoughts, getOneThought, airOutThought, updateThought, deleteThought, addReaction };
+        if (!thought) {
+            return res.status(404).json({ message: 'Thought does not exist' });
+        }
+
+        res.json(thought);
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+
+module.exports = { getThoughts, getOneThought, airOutThought, updateThought, deleteThought, addReaction, deleteReaction };
