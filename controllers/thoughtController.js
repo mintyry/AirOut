@@ -35,7 +35,8 @@ async function airOutThought(req, res) {
         //adding it to user's thoughts field
         const user = await User.findOneAndUpdate
             (
-                { _id: req.body.userId },
+                //adding filter for _id AND username makes it so that if making a thought and either one of those fields is incorrect, the thought will not save to the user's thoughts field.
+                { _id: req.body.userId, username: req.body.username },
                 { $addToSet: { thoughts: newThought._id } },
                 { new: true }
             );
