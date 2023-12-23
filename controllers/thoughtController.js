@@ -101,6 +101,12 @@ async function deleteThought(req, res) {
 //function to create reaction
 async function addReaction(req, res) {
     try {
+        //validates to ensure only a user can react
+        const user = await User.findOne({ username: req.body.username });
+        if (!user) {
+            return res.status(404).json({ message: 'User does not exist.' });
+        }
+        
         const thought = await Thought.findOneAndUpdate
             (
                 { _id: req.params.thoughtId },
