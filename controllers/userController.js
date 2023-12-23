@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 // function to find and read all users
 async function getUsers(req, res) {
@@ -58,17 +58,17 @@ async function updateUser(req, res) {
 
 //function to delete user by _id
 async function deleteUser(req, res) {
-    console.log('this hit first')
     try {
-        console.log('this hit second')
         const deletedUser = await User.findOneAndDelete({ _id: req.params.userId });
-        console.log('this hit third')
-        console.log(deletedUser);
+ 
         if(!deletedUser){
             return res.status(404).json({message: 'Cannot delete a user that does not exist'});
         }
 
-        res.json({message: 'User deleted.'});
+        //BONUS: deletes thoughts along with user
+        await Thought.deleteMany({ _id: { $in: deletedUser.thoughts } });
+
+        res.json({message: 'User and their thoughts have been deleted.'});
 
     } catch (error) {
         console.log('Error:', error);
