@@ -28,5 +28,5 @@ const thoughtSchema = new mongoose.Schema({
 
 //need a virtual
 
-const Thought = model('Thought', thoughtSchema);
+const Thought = mongoose.model('Thought', thoughtSchema);
 module.exports = Thought;

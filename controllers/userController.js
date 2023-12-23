@@ -11,7 +11,7 @@ async function getUsers(req, res) {
     }
 };
 
-//function to find one user and read
+//function to find one user by _id and read
 async function getOneUser(req, res) {
     try {
         const oneUser = await User
@@ -23,7 +23,7 @@ async function getOneUser(req, res) {
         }
         res.status(200).json(oneUser);
     } catch (error) {
-        console.log('Could not get all users');
+        console.log('Could not get one user');
         res.status(500).json({ error });
     }
 };
@@ -40,7 +40,7 @@ async function createUser(req, res) {
     }
 };
 
-//function to update user
+//function to update user by _id
 async function updateUser(req, res) {
     try {
         const editedUser = await User.findOneAndUpdate(
@@ -56,7 +56,7 @@ async function updateUser(req, res) {
     }
 };
 
-//function to delete user
+//function to delete user by _id
 async function deleteUser(req, res) {
     console.log('this hit first')
     try {
