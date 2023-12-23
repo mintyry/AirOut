@@ -104,4 +104,32 @@ async function addFriend(req, res) {
     }
 };
 
-module.exports = { getUsers, getOneUser, createUser, updateUser, deleteUser, addFriend };
+//function to delete friend by _id
+async function deleteFriend(req, res) {
+    try {
+        const friend = await User
+        .findOne({_id: req.params.friendId})
+        .select('-__v');
+
+        if (!friend) {
+            return res.status(404).json({message: 'Could not find the friend you want to delete.'})
+        }
+        const youLostAFriend = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $pull: { friends: friend._id } },
+            { new: true }
+        );
+            
+        if (!youLostAFriend) {
+            return res.status(404).json({message: 'User trying to delete friend does not exist.'})
+        }
+
+        res.status(200).json({ message: 'You lost a friend!', youLostAFriend })
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+module.exports = { getUsers, getOneUser, createUser, updateUser, deleteUser, addFriend, deleteFriend };
