@@ -55,7 +55,7 @@ async function airOutThought(req, res) {
     }
 };
 
-//function to update user by _id
+//function to update thought by _id
 async function updateThought(req, res) {
     try {
         const reThought = await Thought.findOneAndUpdate(
@@ -78,5 +78,22 @@ async function updateThought(req, res) {
     }
 };
 
+//function to delete user by _id
+async function deleteThought(req, res) {
+    try {
+        const deletedThought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+ 
+        if(!deletedThought){
+            return res.status(404).json({message: 'Cannot delete a thought that does not exist'});
+        }
 
-module.exports = { getThoughts, getOneThought, airOutThought, updateThought };
+        res.json({message: 'Your thought have been deleted. Flash Men In Black light.'});
+
+    } catch (error) {
+        console.log('Error:', error);
+        res.status(500).json(error);
+    }
+};
+
+
+module.exports = { getThoughts, getOneThought, airOutThought, updateThought, deleteThought };
