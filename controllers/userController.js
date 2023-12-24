@@ -79,6 +79,10 @@ async function deleteUser(req, res) {
 //function to add friend by _id
 async function addFriend(req, res) {
     try {
+        const user = await User
+        .findOne({_id: req.params.userId})
+        .select('-__v');
+
         const addedFriend = await User
         .findOne({_id: req.params.friendId})
         .select('-__v');
@@ -91,12 +95,21 @@ async function addFriend(req, res) {
             { $addToSet: { friends: addedFriend._id } },
             { new: true }
         );
+
+        //code so that when person 1 adds person 2, they are both friends.
+        //Without this, when person 1 adds person 2, person 2 is added to person 1's friends list,
+        //but person 1 is not added to person 2's list.
+        const youreTheirFriendToo = await User.findOneAndUpdate(
+            { _id: req.params.friendId },
+            { $addToSet: { friends: user._id }},
+            { new: true }
+        )
             
         if (!madeNewFriend) {
             return res.status(404).json({message: 'User trying to add friend does not exist.'})
         }
 
-        res.status(200).json({ message: 'You made a new friend!', madeNewFriend })
+        res.status(200).json({ message: 'You are both friends!', madeNewFriend, youreTheirFriendToo })
 
     } catch (error) {
         console.log('Error:', error);

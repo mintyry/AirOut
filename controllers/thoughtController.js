@@ -79,7 +79,7 @@ async function updateThought(req, res) {
     }
 };
 
-//function to delete user by _id
+//function to delete thought by _id
 async function deleteThought(req, res) {
     try {
         const deletedThought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
