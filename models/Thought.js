@@ -23,7 +23,7 @@ const thoughtSchema = new mongoose.Schema({
     },
     reactions: [reactionSchema]
 },
-{ toJSON: { getters: true, virtuals: true }}
+{ toJSON: { getters: true, virtuals: true }, id: false }
 );
 
 //need a virtual

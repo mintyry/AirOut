@@ -30,7 +30,8 @@ const userSchema = new mongoose.Schema(
         ]
     },
     //options object
-    { toJSON: { virtuals: true }}
+    //id set to false will not show the string id when retrieving data
+    { toJSON: { virtuals: true }, id: false}
 );
 
 //need a virtual need to add toJson ^ and getter
