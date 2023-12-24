@@ -95,7 +95,15 @@ async function deleteThought(req, res) {
             return res.status(404).json({ message: 'Cannot delete a thought that does not exist' });
         }
 
-        res.json({ message: 'Your thought have been deleted. Flash Men In Black light.' });
+        //deletes the id of the deleted thought from the user's thoughts array
+        const userLostThought = await User.findOneAndUpdate
+        (
+            { username: deletedThought.username },
+            { $pull: { thoughts: req.params.thoughtId } },
+            { new: true }
+        );
+
+        res.json({ message: 'Your thought has been deleted. Flash Men In Black light.', userLostThought });
 
     } catch (error) {
         console.log('Error:', error);
