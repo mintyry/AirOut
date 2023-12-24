@@ -31,6 +31,13 @@ async function getOneThought(req, res) {
 //function to create thought
 async function airOutThought(req, res) {
     try {
+        // check to see if poster has an existing username and userid, if not, they cannot post.
+        const validUser = await User.findOne({ username: req.body.username, _id: req.body.userId });
+        if (!validUser) {
+            return res.status(404).json({ message: 'Sign up to air out your thoughts!' });
+        }
+
+
         const newThought = await Thought.create(req.body);
         //adding it to user's thoughts field
         const user = await User.findOneAndUpdate

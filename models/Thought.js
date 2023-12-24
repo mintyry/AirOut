@@ -23,10 +23,15 @@ const thoughtSchema = new mongoose.Schema({
     },
     reactions: [reactionSchema]
 },
-{ toJSON: { getters: true } }
+{ toJSON: { getters: true, virtuals: true }}
 );
 
 //need a virtual
+thoughtSchema.virtual('reactionCount').get(
+    function () {
+        return this.reactions.length;
+    }
+);
 
 const Thought = mongoose.model('Thought', thoughtSchema);
 module.exports = Thought;

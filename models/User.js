@@ -30,11 +30,7 @@ const userSchema = new mongoose.Schema(
         ]
     },
     //options object
-    {
-        toJSON: {
-            virtuals: true
-        }
-    }
+    { toJSON: { virtuals: true }}
 );
 
 //need a virtual need to add toJson ^ and getter
