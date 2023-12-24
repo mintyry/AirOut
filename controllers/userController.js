@@ -120,6 +120,10 @@ async function addFriend(req, res) {
 //function to delete friend by _id
 async function deleteFriend(req, res) {
     try {
+        const user = await User
+        .findOne({_id: req.params.userId})
+        .select('-__v');
+        
         const friend = await User
         .findOne({_id: req.params.friendId})
         .select('-__v');
@@ -132,12 +136,18 @@ async function deleteFriend(req, res) {
             { $pull: { friends: friend._id } },
             { new: true }
         );
+        //code so that when person 1 deletes person 2, they are both removed from each other's friends list.
+        const friendLostYouToo = await User.findOneAndUpdate(
+            { _id: req.params.friendId },
+            { $pull: { friends: user._id }},
+            { new: true }
+        )
             
         if (!youLostAFriend) {
             return res.status(404).json({message: 'User trying to delete friend does not exist.'})
         }
 
-        res.status(200).json({ message: 'You lost a friend!', youLostAFriend })
+        res.status(200).json({ message: 'You lost a friend!', youLostAFriend, friendLostYouToo })
 
     } catch (error) {
         console.log('Error:', error);
