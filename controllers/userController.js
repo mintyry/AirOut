@@ -60,15 +60,27 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
     try {
         const deletedUser = await User.findOneAndDelete({ _id: req.params.userId });
- 
-        if(!deletedUser){
-            return res.status(404).json({message: 'Cannot delete a user that does not exist'});
+        //MY PERSONAL BONUS: finds other users that have user as friend
+        const friendsOfDeletedUser = await User.find({ friends: deletedUser._id });
+        console.log(friendsOfDeletedUser);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'Cannot delete a user that does not exist' });
         }
 
         //BONUS: deletes thoughts along with user
         await Thought.deleteMany({ _id: { $in: deletedUser.thoughts } });
 
-        res.json({message: 'User and their thoughts have been deleted.'});
+
+        // deletes the deleted user's id from their array of friends
+        for (i = 0; i < friendsOfDeletedUser.length; i++) {
+            await User.findOneAndUpdate(
+                { _id: friendsOfDeletedUser[i]._id },
+                { $pull: { friends: req.params.userId } }
+            )
+        };
+
+        res.json({ message: 'User and their thoughts have been deleted. User is also removed from any friends lists they used to be in.' });
 
     } catch (error) {
         console.log('Error:', error);
@@ -80,15 +92,15 @@ async function deleteUser(req, res) {
 async function addFriend(req, res) {
     try {
         const user = await User
-        .findOne({_id: req.params.userId})
-        .select('-__v');
+            .findOne({ _id: req.params.userId })
+            .select('-__v');
 
         const addedFriend = await User
-        .findOne({_id: req.params.friendId})
-        .select('-__v');
+            .findOne({ _id: req.params.friendId })
+            .select('-__v');
 
         if (!addedFriend) {
-            return res.status(404).json({message: 'Could not find the user you want to add.'})
+            return res.status(404).json({ message: 'Could not find the user you want to add.' })
         }
         const madeNewFriend = await User.findOneAndUpdate(
             { _id: req.params.userId },
@@ -101,12 +113,12 @@ async function addFriend(req, res) {
         //but person 1 is not added to person 2's list.
         const youreTheirFriendToo = await User.findOneAndUpdate(
             { _id: req.params.friendId },
-            { $addToSet: { friends: user._id }},
+            { $addToSet: { friends: user._id } },
             { new: true }
         )
-            
+
         if (!madeNewFriend) {
-            return res.status(404).json({message: 'User trying to add friend does not exist.'})
+            return res.status(404).json({ message: 'User trying to add friend does not exist.' })
         }
 
         res.status(200).json({ message: 'You are both friends!', madeNewFriend, youreTheirFriendToo })
@@ -121,15 +133,15 @@ async function addFriend(req, res) {
 async function deleteFriend(req, res) {
     try {
         const user = await User
-        .findOne({_id: req.params.userId})
-        .select('-__v');
-        
+            .findOne({ _id: req.params.userId })
+            .select('-__v');
+
         const friend = await User
-        .findOne({_id: req.params.friendId})
-        .select('-__v');
+            .findOne({ _id: req.params.friendId })
+            .select('-__v');
 
         if (!friend) {
-            return res.status(404).json({message: 'Could not find the friend you want to delete.'})
+            return res.status(404).json({ message: 'Could not find the friend you want to delete.' })
         }
         const youLostAFriend = await User.findOneAndUpdate(
             { _id: req.params.userId },
@@ -139,12 +151,12 @@ async function deleteFriend(req, res) {
         //code so that when person 1 deletes person 2, they are both removed from each other's friends list.
         const friendLostYouToo = await User.findOneAndUpdate(
             { _id: req.params.friendId },
-            { $pull: { friends: user._id }},
+            { $pull: { friends: user._id } },
             { new: true }
         )
-            
+
         if (!youLostAFriend) {
-            return res.status(404).json({message: 'User trying to delete friend does not exist.'})
+            return res.status(404).json({ message: 'User trying to delete friend does not exist.' })
         }
 
         res.status(200).json({ message: 'You lost a friend!', youLostAFriend, friendLostYouToo })
